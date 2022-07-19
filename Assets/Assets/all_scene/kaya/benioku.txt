@@ -1,0 +1,3 @@
+tekli kayanın texture adı kaya2 
+
+diğer kayaların hepsi kaya texture'ından okuyor
