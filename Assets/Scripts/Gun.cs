@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-//using RootMotion.Dynamics;
+using RootMotion.Dynamics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
@@ -12,13 +12,16 @@ public class Gun : MonoBehaviour
 	private float range = 10f;
 	public float impactForce = 3000f;
 	public GameObject firePos;
-	private bool fire;
+	private bool win = false;
+	private bool lose = false;
 	private int random;
 	public Transform target;
 	public ParticleSystem muzzle;
 	public GameObject impactEffect;
+	public PuppetMaster puppet;
+	public TimeLineControl Control;
+	public Baslaa basla;
 
-	//public PuppetMaster puppet;
 	// Start is called before the first frame update
     void Start()
     {
@@ -29,7 +32,14 @@ public class Gun : MonoBehaviour
     void Update()
     {
 	    random = Random.Range(0, 6);
-		//transform.LookAt(target);
+	    if (win)
+	    {
+		    basla.winPanel.SetActive(true);
+	    }
+	    if (lose)
+	    {
+		    basla.losePanel.SetActive(true);
+	    }
     }
 
     public void Shoot()
@@ -45,10 +55,20 @@ public class Gun : MonoBehaviour
 
 		    if (hit.rigidbody != null)
 		    {
-			    //puppet.state = PuppetMaster.State.Dead;
+			    puppet.state = PuppetMaster.State.Dead;
 			    hit.rigidbody.AddForce(-hit.normal * impactForce, ForceMode.VelocityChange);
 		    }
 		    FindObjectOfType<AudioManager>().Play("GunFire");
+			Control.stop();
+			if (hit.transform.tag == "Player")
+			{
+				lose = true;
+			}
+
+			if (hit.transform.tag == "Enemy")
+			{
+				win = true;
+			}
 		}
 	    else
 	    {
